@@ -402,6 +402,7 @@ class _HomePagesState extends State<HomePages>
                                   itemCount: snapshot.data.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
+                                    // print(snapshot.data[index]["status_purchased"]);
                                     return Container(
                                       width: 165,
                                       margin: const EdgeInsets.all(3),
@@ -427,6 +428,22 @@ class _HomePagesState extends State<HomePages>
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       BookDetail(
+                                                    status_purchased: snapshot
+                                                            .data[index]
+                                                        ["status_purchased"],
+                                                    price: snapshot.data[index]
+                                                            ["price"]
+                                                        .toString(),
+                                                    title: snapshot.data[index]
+                                                            ["title"]
+                                                        .toString(),
+                                                    payment: snapshot
+                                                        .data[index]["payment"],
+                                                    book_file: snapshot
+                                                        .data[index]
+                                                            ["book_file"]
+                                                        .toString(),
+                                                    tokenuser: token.toString(),
                                                     slug: snapshot.data[index]
                                                             ["slug"]
                                                         .toString(),

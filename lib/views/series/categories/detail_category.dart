@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, deprecated_member_use, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, deprecated_member_use, non_constant_identifier_names, unrelated_type_equality_checks
 
 import 'dart:convert';
 
@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend1/app/config/api.dart';
 import 'package:frontend1/views/series/categories/category_by_slug.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryDetal extends StatefulWidget {
   const CategoryDetal({
@@ -13,17 +14,27 @@ class CategoryDetal extends StatefulWidget {
     required this.slug,
     required this.category_name,
     required this.book_count,
-    required this.tag_count,
+    required this.tag_count,    
   }) : super(key: key);
   final String slug;
   final String category_name;
   final int book_count;
-  final int tag_count;
+  final int tag_count;  
   @override
   _CategoryDetalState createState() => _CategoryDetalState();
 }
 
 class _CategoryDetalState extends State<CategoryDetal> {
+   String? name, email, token;
+  getPreference() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      name = preferences.getString("name").toString();
+      email = preferences.getString("email").toString();
+      token = preferences.getString("token").toString();
+    });
+  }
+
   Text _buildRatingStars(int rating) {
     String stars = '';
     for (int i = 0; i < rating; i++) {
@@ -40,9 +51,7 @@ class _CategoryDetalState extends State<CategoryDetal> {
     final response = await http.get(
       Uri.parse(ApiConfig.apiUrl() +
           "category/single-category/${widget.category_name.toString()}"),
-      headers: {
-        'Authorization': 'Bearer 1|bZSP2Bu8hM9UoaT4GxWNUMDyFukeY30Ns41sd516'
-      },
+      headers: {'Authorization': 'Bearer $token'},
     );
     return json.decode(response.body)["detailcategory"];
   }
@@ -51,9 +60,7 @@ class _CategoryDetalState extends State<CategoryDetal> {
     final response = await http.get(
       Uri.parse(ApiConfig.apiUrl() +
           "category/categorytag/${widget.category_name.toString()}"),
-      headers: {
-        'Authorization': 'Bearer 1|bZSP2Bu8hM9UoaT4GxWNUMDyFukeY30Ns41sd516'
-      },
+      headers: {'Authorization': 'Bearer $token'},
     );
     return json.decode(response.body)["category_tag"];
   }
@@ -64,6 +71,7 @@ class _CategoryDetalState extends State<CategoryDetal> {
     setState(() {
       getCategory();
       getCategorytag();
+      getPreference();
     });
   }
 

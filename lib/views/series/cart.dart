@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sized_box_for_whitespace, non_constant_identifier_names
 
 import 'dart:convert';
 
@@ -493,8 +493,9 @@ class _CartPagesState extends State<CartPages> {
                                             var slug = snapshot.data[index]
                                                     ["book"]["slug"]
                                                 .toString();
+                                                var token = widget.usertoken.toString();
                                             setState(() {
-                                              checkout(cart_id, slug);
+                                              checkout(cart_id, slug, token);
                                             });
                                           },
                                           child: Container(

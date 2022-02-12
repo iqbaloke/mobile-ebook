@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, unused_local_variable, non_constant_identifier_names
+
 import 'dart:convert';
 import 'package:frontend1/app/config/api.dart';
 import 'package:http/http.dart' as http;
@@ -82,44 +84,11 @@ addToCart(String slug, String id, String price, String tokendata) async {
   );
   var check = json.decode(response.body);
   if (check["message"] == "success") {
-    // var context;
-    // Alert(
-    //   context: context,
-    //   title: "${check["message"]}",
-    //   desc: "success add to cart",
-    // ).show();
     print("add to cart");
   } else {
     print("already in cart");
-    // var context;
-    // Alert(
-    //   context: context,
-    //   title: "${check["message"]}",
-    //   desc: "Book Already In the Cart",
-    // ).show();
   }
 }
-
-// Future<List<dynamic>> getCart() async {
-//   final response = await http.get(
-//     Uri.parse(ApiConfig.apiUrl() + "cart/getcart"),
-//     headers: {
-//       'Authorization': 'Bearer 2|REtIUQLUecTleqVgIuG3qFd8gVMEYjru34btOfYf',
-//     },
-//   );
-//   return json.decode(response.body)["data"];
-// }
-
-// Future<List<dynamic>> myBook() async {
-//   final response = await http.get(
-//     Uri.parse(ApiConfig.apiUrl() + "book/creator/my-book"),
-//     headers: {
-//       'Authorization': 'Bearer 2|REtIUQLUecTleqVgIuG3qFd8gVMEYjru34btOfYf',
-//     },
-//   );
-//   // print(json.decode(response.body)["mybook"]);
-//   return json.decode(response.body)["mybook"];
-// }
 
 deleteCart(int id) async {
   final response = await http.delete(
@@ -131,50 +100,23 @@ deleteCart(int id) async {
   var delete = json.decode(response.body);
 }
 
-checkout(int cart_id, String slug) async {
+checkout(int cart_id, String slug, String token) async {
   final response = await http.post(
     Uri.parse(ApiConfig.apiUrl() + "order/$slug/$cart_id"),
     headers: {
-      'Authorization': 'Bearer 2|REtIUQLUecTleqVgIuG3qFd8gVMEYjru34btOfYf',
+      'Authorization': 'Bearer $token',
     },
   );
 }
 
-// Future<IncomeModel> chekIncome() async {
-//   final response = await http.get(
-//     Uri.parse(ApiConfig.apiUrl() + "dashboard/income"),
-//     headers: {
-//       'Authorization': 'Bearer 2|REtIUQLUecTleqVgIuG3qFd8gVMEYjru34btOfYf',
-//     },
-//   );
-//   if (response.statusCode == 200) {
-//     return IncomeModel.fromJson(jsonDecode(response.body));
-//   } else {
-//     throw Exception('Failed to load album');
-//   }
-// }
-
-// Future<List<dynamic>> fectwidraw() async {
-//   final response = await http.get(
-//     Uri.parse(ApiConfig.apiUrl() + "dashboard/income"),
-//     headers: {
-//       'Authorization': 'Bearer 2|REtIUQLUecTleqVgIuG3qFd8gVMEYjru34btOfYf',
-//     },
-//   );
-//   // print(json.decode(response.body)["widraw"]);
-//   return json.decode(response.body)["widraw"];
-// }
-
-// Future<List<dynamic>> fecttopsallingauthor() async {
-//   final response = await http.get(
-//     Uri.parse(ApiConfig.apiUrl() + "dashboard/book/top-book"),
-//     headers: {
-//       'Authorization': 'Bearer 2|REtIUQLUecTleqVgIuG3qFd8gVMEYjru34btOfYf',
-//     },
-//   );
-//   // print(json.decode(response.body)["data"]);
-//   return json.decode(response.body)["data"];
-// }
+checkoutnotcart(String slug, String token) async {
+  final response = await http.post(
+    Uri.parse(ApiConfig.apiUrl() + "checkoutnotcart/$slug"),
+    headers: {
+      'Authorization': 'Bearer $token',
+    },
+  );
+}
 
 Future<List<dynamic>> fecthpurchased() async {
   final response = await http.get(

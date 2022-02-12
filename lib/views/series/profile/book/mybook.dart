@@ -1,10 +1,9 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, sized_box_for_whitespace
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, unused_local_variable, avoid_unnecessary_containers, sized_box_for_whitespace, non_constant_identifier_names
 
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:frontend1/app/config/api.dart';
-import 'package:frontend1/app/config/network.dart';
 import 'package:frontend1/views/series/profile/book/createbook.dart';
 import 'package:frontend1/views/series/profile/book/updatebook.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';

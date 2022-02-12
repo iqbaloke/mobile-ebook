@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend1/app/config/api.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryBySlug extends StatefulWidget {
   const CategoryBySlug(
@@ -29,12 +30,22 @@ class _CategoryBySlugState extends State<CategoryBySlug> {
     );
   }
 
+  String? name, email, token;
+  getPreference() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      name = preferences.getString("name").toString();
+      email = preferences.getString("email").toString();
+      token = preferences.getString("token").toString();
+    });
+  }
+
   Future<List<dynamic>> getBookTag() async {
     final response = await http.get(
       Uri.parse(ApiConfig.apiUrl() +
           "category/booktag/${widget.category_name.toString()}/${widget.tag_name.toString()}"),
       headers: {
-        'Authorization': 'Bearer 1|bZSP2Bu8hM9UoaT4GxWNUMDyFukeY30Ns41sd516'
+        'Authorization': 'Bearer $token'
       },
     );
     // print(json.decode(response.body)["book"]);
@@ -46,6 +57,7 @@ class _CategoryBySlugState extends State<CategoryBySlug> {
     super.initState();
     setState(() {
       getBookTag();
+      getPreference();
     });
   }
 
@@ -85,86 +97,86 @@ class _CategoryBySlugState extends State<CategoryBySlug> {
               SizedBox(
                 height: 10,
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      // color: Colors.grey,
-                      width: 50,
-                      height: 40,
-                      child: Center(
-                        child: Icon(
-                          Icons.filter_list_outlined,
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: SizedBox(
-                          height: 40,
-                          child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: <Widget>[
-                              Container(
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.blueAccent,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text("Tags"),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.blueAccent,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text("Price"),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.blueAccent,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text("Starts"),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Divider(
-                height: 10,
-                color: Colors.blue,
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.start,
+              //     children: <Widget>[
+              //       Container(
+              //         // color: Colors.grey,
+              //         width: 50,
+              //         height: 40,
+              //         child: Center(
+              //           child: Icon(
+              //             Icons.filter_list_outlined,
+              //             color: Colors.blue,
+              //           ),
+              //         ),
+              //       ),
+              //       Expanded(
+              //         child: SingleChildScrollView(
+              //           child: SizedBox(
+              //             height: 40,
+              //             child: ListView(
+              //               scrollDirection: Axis.horizontal,
+              //               children: <Widget>[
+              //                 Container(
+              //                   width: 100,
+              //                   decoration: BoxDecoration(
+              //                     borderRadius: BorderRadius.circular(5),
+              //                     color: Colors.white,
+              //                     border: Border.all(
+              //                       color: Colors.blueAccent,
+              //                     ),
+              //                   ),
+              //                   child: Center(
+              //                     child: Text("Tags"),
+              //                   ),
+              //                 ),
+              //                 SizedBox(
+              //                   width: 10,
+              //                 ),
+              //                 Container(
+              //                   width: 100,
+              //                   decoration: BoxDecoration(
+              //                     borderRadius: BorderRadius.circular(5),
+              //                     color: Colors.white,
+              //                     border: Border.all(
+              //                       color: Colors.blueAccent,
+              //                     ),
+              //                   ),
+              //                   child: Center(
+              //                     child: Text("Price"),
+              //                   ),
+              //                 ),
+              //                 SizedBox(
+              //                   width: 10,
+              //                 ),
+              //                 Container(
+              //                   width: 100,
+              //                   decoration: BoxDecoration(
+              //                     borderRadius: BorderRadius.circular(5),
+              //                     color: Colors.white,
+              //                     border: Border.all(
+              //                       color: Colors.blueAccent,
+              //                     ),
+              //                   ),
+              //                   child: Center(
+              //                     child: Text("Starts"),
+              //                   ),
+              //                 ),
+              //               ],
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // Divider(
+              //   height: 10,
+              //   color: Colors.blue,
+              // ),
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: FutureBuilder(

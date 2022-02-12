@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, avoid_print, prefer_const_literals_to_create_immutables, deprecated_member_use, prefer_final_fields, unnecessary_null_comparison, unrelated_type_equality_checks
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, avoid_print, prefer_const_literals_to_create_immutables, deprecated_member_use, prefer_final_fields, unnecessary_null_comparison, unrelated_type_equality_checks, unused_field, unnecessary_this, prefer_void_to_null
 
 import 'dart:convert';
 import 'dart:io';
@@ -174,20 +174,24 @@ class _UpdateBookState extends State<UpdateBook> {
     request.fields["page"] = page!;
     request.fields["file_id"] = file!;
     request.fields["description"] = description!;
-    var length = await image!.length();
-    var lengthbook = await book_file!.length();
-    request.files.add(http.MultipartFile(
-      "thumbnail",
-      http.ByteStream(DelegatingStream.typed(image!.openRead())),
-      length,
-      filename: path.basename(image!.path),
-    ));
-    request.files.add(http.MultipartFile(
-      "book_file",
-      http.ByteStream(DelegatingStream.typed(book_file!.openRead())),
-      lengthbook,
-      filename: path.basename(book_file!.path),
-    ));
+    if (image != null) {
+      var length = await image!.length();
+      request.files.add(http.MultipartFile(
+        "thumbnail",
+        http.ByteStream(DelegatingStream.typed(image!.openRead())),
+        length,
+        filename: path.basename(image!.path),
+      ));
+    }
+    if (book_file != null) {
+      var lengthbook = await book_file!.length();
+      request.files.add(http.MultipartFile(
+        "book_file",
+        http.ByteStream(DelegatingStream.typed(book_file!.openRead())),
+        lengthbook,
+        filename: path.basename(book_file!.path),
+      ));
+    }
 
     request.headers.addAll(headers);
 

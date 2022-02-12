@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, non_constant_identifier_names, prefer_const_literals_to_create_immutables, avoid_print
 
 import 'dart:convert';
 
@@ -9,6 +9,7 @@ import 'package:frontend1/views/layouts/header.dart';
 import 'package:frontend1/views/layouts/layout_home/layout_home.dart';
 import 'package:frontend1/views/series/about.dart';
 import 'package:frontend1/views/series/cart.dart';
+import 'package:frontend1/views/series/ordernootification.dart';
 import 'package:frontend1/views/series/profile/income.dart';
 import 'package:frontend1/views/series/profile/myprofile.dart';
 import 'package:frontend1/views/series/transaction.dart';
@@ -27,10 +28,17 @@ class MenuDrawer extends StatefulWidget {
 
 class Cart {
   final String cart_count;
+  final int orderNotification;
 
-  Cart({required this.cart_count});
+  Cart({
+    required this.cart_count,
+    required this.orderNotification,
+  });
   factory Cart.fromJson(Map<String, dynamic> json) {
-    return Cart(cart_count: json["cart_count"].toString());
+    return Cart(
+      cart_count: json["cart_count"].toString(),
+      orderNotification: json["orderNotification"],
+    );
   }
 }
 
@@ -44,6 +52,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
       name = preferences.getString("name").toString();
       email = preferences.getString("email").toString();
       token = preferences.getString("token").toString();
+      print(token);
     });
   }
 
@@ -117,24 +126,35 @@ class _MenuDrawerState extends State<MenuDrawer> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CartPages(
+                        builder: (context) => OrderNotification(
                           usertoken: token.toString(),
                         ),
                       ),
                     );
                   },
-                  child: Badge(
-                    position: BadgePosition.topEnd(top: 3, end: -5),
-                    badgeContent: Text(
-                      "${snapshot.data!.cart_count}",
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    badgeColor: Colors.blue,
-                    child: Icon(Icons.notifications_active_outlined),
+                  child: LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      if (snapshot.data!.orderNotification < 1) {
+                        return Icon(
+                          Icons.notifications_active_outlined,
+                        );
+                      } else {
+                        return Badge(
+                          position: BadgePosition.topEnd(top: 3, end: -5),
+                          badgeContent: Text(
+                            "${snapshot.data!.orderNotification}",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          badgeColor: Colors.blue,
+                          child: Icon(Icons.notifications_active_outlined),
+                        );
+                      }
+                    },
                   ),
                 );
               }
@@ -200,7 +220,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
     );
   }
 
-  // ignore: non_constant_identifier_names
   Widget MyDrawerList() {
     return Container(
       padding: const EdgeInsets.only(

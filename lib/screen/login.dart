@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, deprecated_member_use, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, dead_code, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_const_constructors, deprecated_member_use, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, dead_code, prefer_typing_uninitialized_variables, avoid_print
 
 import 'dart:convert';
 
@@ -253,8 +253,7 @@ class _LoginPageState extends State<LoginPage> {
                         height: 15,
                       ),
                       ButtonTheme(
-                        minWidth: double.infinity,
-                        // ignore: deprecated_member_use
+                        minWidth: double.infinity,                        
                         child: RaisedButton(
                           onPressed: () {
                             _check();

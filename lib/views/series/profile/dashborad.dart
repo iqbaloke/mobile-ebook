@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, unused_local_variable
 
 import 'dart:convert';
 import 'package:frontend1/views/series/profile/book/createbook.dart';
@@ -466,12 +466,24 @@ class _DashboardPagesState extends State<DashboardPages> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) => BookDetail(
+                                                tokenuser: token.toString(),
+                                                price: snapshot.data[index]
+                                                        ["price"]
+                                                    .toString(),
                                                 slug: snapshot.data[index]
                                                         ["slug"]
                                                     .toString(),
                                                 name: snapshot.data[index]
                                                         ["title"]
                                                     .toString(),
+                                                book_file: '',
+                                                payment: snapshot.data[index]
+                                                    ["payment"],
+                                                title: snapshot.data[index]
+                                                        ["title"]
+                                                    .toString(), 
+                                                    status_purchased: snapshot.data[index]
+                                                        ["status_purchased"],
                                               ),
                                             ),
                                           );

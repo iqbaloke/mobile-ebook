@@ -1,20 +1,39 @@
-// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_element
+// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors, prefer_const_literals_to_create_immutables, unused_element, non_constant_identifier_names
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:frontend1/app/config/api.dart';
+import 'package:frontend1/app/config/network.dart';
 import 'package:frontend1/app/model/bookmodel.dart';
+import 'package:frontend1/views/series/pdfviewpage.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+import 'package:path_provider/path_provider.dart';
 
 class BookDetail extends StatefulWidget {
   const BookDetail({
     Key? key,
     required this.slug,
+    required this.price,
+    required this.title,
     required this.name,
+    required this.tokenuser,
+    required this.book_file,
+    required this.payment,
+    required this.status_purchased,
   }) : super(key: key);
   final String slug;
+  final String price;
+  final String title;
   final String name;
+  final String tokenuser;
+  final String book_file;
+  final int status_purchased;
+  final int payment;
   @override
   _BookDetailState createState() => _BookDetailState();
 }
@@ -36,7 +55,7 @@ class _BookDetailState extends State<BookDetail> {
     final response = await http.get(
       Uri.parse(ApiConfig.apiUrl() + "book/single-book/${widget.slug}"),
       headers: {
-        'Authorization': 'Bearer 1|bZSP2Bu8hM9UoaT4GxWNUMDyFukeY30Ns41sd516',
+        'Authorization': 'Bearer ${widget.tokenuser}',
       },
     );
     if (response.statusCode == 200) {
@@ -50,19 +69,45 @@ class _BookDetailState extends State<BookDetail> {
   Future<List<dynamic>> fetchComment() async {
     final response = await http.get(
         Uri.parse(ApiConfig.apiUrl() + "comment/all-comment/${widget.slug}"),
-        headers: {
-          'Authorization': 'Bearer 1|bZSP2Bu8hM9UoaT4GxWNUMDyFukeY30Ns41sd516'
-        });
+        headers: {'Authorization': 'Bearer ${widget.tokenuser}'});
     return json.decode(response.body)["data"];
+  }
+
+  String remotePDFpath = "";
+
+  Future<File> createFileOfPdfUrl() async {
+    Completer<File> completer = Completer();
+    try {
+      final url = widget.book_file;
+      final filename = url.substring(url.lastIndexOf("/") + 1);
+      var request = await HttpClient().getUrl(Uri.parse(url));
+      var response = await request.close();
+      var bytes = await consolidateHttpClientResponseBytes(response);
+      var dir = await getApplicationDocumentsDirectory();
+      File file = File("${dir.path}/$filename");
+
+      await file.writeAsBytes(bytes, flush: true);
+      completer.complete(file);
+    } catch (e) {
+      throw Exception('Error parsing asset file!');
+    }
+
+    return completer.future;
   }
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      getbookDetail();
-      fetchComment();
+    // setState(() {
+    getbookDetail();
+    fetchComment();
+    createFileOfPdfUrl().then((f) {
+      setState(() {
+        remotePDFpath = f.path;
+      });
     });
+    // });
+    print("object ${widget.status_purchased}");
   }
 
   @override
@@ -82,6 +127,80 @@ class _BookDetailState extends State<BookDetail> {
           ),
         ),
       ),
+      bottomNavigationBar: Material(
+        color: widget.payment == 1 ? Color(0xff021B79) : Color(0xff43e97b),
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            if (widget.payment == 1) {
+              return InkWell(
+                onTap: () {
+                  var slug = widget.slug.toString();
+                  var token = widget.tokenuser.toString();
+                  setState(() {
+                    checkoutnotcart(slug, token);
+                  });
+                },
+                child: SizedBox(
+                  height: kToolbarHeight,
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.shopping_cart_outlined,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        'Check Out ${widget.price}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return InkWell(
+                onTap: () {
+                  if (remotePDFpath.isNotEmpty) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PDFScreen(
+                          path: remotePDFpath,
+                          title: widget.title,
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: SizedBox(
+                  height: kToolbarHeight,
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Show Book',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          },
+        ),
+      ),
       body: ListView(
         children: [
           FutureBuilder(
@@ -97,26 +216,26 @@ class _BookDetailState extends State<BookDetail> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
-                        height: 20,
-                      ),
+                      // SizedBox(
+                      //   height: 20,
+                      // ),
                       Container(
-                        height: 150,
+                        height: 200,
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           image: DecorationImage(
-                            image: NetworkImage(
-                              snapshot.data.thumbnail,
-                            ),
-                          ),
+                              image: NetworkImage(
+                                snapshot.data.thumbnail,
+                              ),
+                              fit: BoxFit.cover),
                         ),
                       ),
                       SizedBox(
                         height: 30,
                       ),
                       Container(
-                        height: 120,
+                        height: 200,
                         padding: EdgeInsets.all(10),
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
@@ -166,7 +285,63 @@ class _BookDetailState extends State<BookDetail> {
                               ],
                             ),
                             SizedBox(
-                              height: 15,
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.yellow,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "4.6",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  "( 120 reviews )",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            LayoutBuilder(
+                              builder: (BuildContext context,
+                                  BoxConstraints constraints) {
+                                // if (snapshot.data.status_purchased == 1) {
+                                if (widget.status_purchased == 1) {
+                                  return Text("true");
+                                } else {
+                                  return Text("false");
+                                }
+                              },
+                            ),
+                            TextButton(
+                              child: Text("Remote PDF"),
+                              onPressed: () {
+                                if (remotePDFpath.isNotEmpty) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PDFScreen(
+                                          path: remotePDFpath,
+                                          title:
+                                              snapshot.data.title.toString()),
+                                    ),
+                                  );
+                                }
+                              },
                             ),
                             Container(
                               decoration: BoxDecoration(

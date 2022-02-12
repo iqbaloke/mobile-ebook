@@ -1,6 +1,5 @@
-// ignore_for_file: prefer_const_constructors, deprecated_member_use
+// ignore_for_file: prefer_const_constructors, deprecated_member_use, avoid_print
 
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:frontend1/app/config/api.dart';

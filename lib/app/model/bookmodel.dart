@@ -10,6 +10,7 @@ class BookModel {
   final String slug;
   final String price;
   final String thumbnail;
+  final String book_file;
   final FileModel file_id;
   final String approved;
   final String year;
@@ -21,6 +22,7 @@ class BookModel {
   final String sale;
   final String comment;
   final String book_count;
+  final int status_purchased;
 
   BookModel({
     required this.book_key,
@@ -32,6 +34,7 @@ class BookModel {
     required this.slug,
     required this.price,
     required this.thumbnail,
+    required this.book_file,
     required this.file_id,
     required this.approved,
     required this.year,
@@ -43,6 +46,7 @@ class BookModel {
     required this.sale,
     required this.comment,
     required this.book_count,
+    required this.status_purchased,
   });
 
   factory BookModel.fromJson(Map<String, dynamic> json) {
@@ -56,6 +60,7 @@ class BookModel {
       slug: json["slug"].toString(),
       price: json["price"].toString(),
       thumbnail: json["thumbnail"].toString(),
+      book_file: json["book_file"].toString(),
       file_id: FileModel.fromJson(json["file_id"]),
       approved: json["approved"].toString(),
       year: json["year"].toString(),
@@ -67,6 +72,7 @@ class BookModel {
       sale: json["sale"].toString(),
       comment: json["comment"].toString(),
       book_count: json["book_count"].toString(),
+      status_purchased: json["status_purchased"],
     );
   }
 }
